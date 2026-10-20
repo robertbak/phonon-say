@@ -79,12 +79,33 @@ jobs:
           sha256sum phonon-say-$VERSION-linux-x86_64.tar.gz > SHA256SUMS
           cat SHA256SUMS
 
+      - name: Write release notes from the CHANGELOG
+        run: |
+          version="$VERSION"
+          {
+            echo "## phonon-say $version"
+            echo
+            if [ -f CHANGELOG.md ]; then
+              # The section for this version, up to the next heading, without the
+              # trailing link-reference definitions.
+              awk -v v="$version" '
+                $0 ~ "^## \\[" v "\\]" { found=1; next }
+                found && /^## \[/ { exit }
+                found && /^\[.*\]: / { exit }
+                found { print }
+              ' CHANGELOG.md
+            fi
+            echo
+            echo "**Full Changelog**: https://github.com/robertbak/phonon-say/compare/$TAG...HEAD"
+          } > dist/RELEASE_NOTES.md
+          cat dist/RELEASE_NOTES.md
+
       - name: Create the GitHub release
         uses: softprops/action-gh-release@v2
         with:
           name: phonon-say ${{ env.VERSION }}
           tag_name: ${{ env.TAG }}
-          generate_release_notes: true
+          body_path: dist/RELEASE_NOTES.md
           files: |
             dist/phonon-say-${{ env.VERSION }}-linux-x86_64.tar.gz
             dist/SHA256SUMS
