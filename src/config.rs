@@ -64,10 +64,10 @@ pub fn path(explicit: Option<&Path>) -> Option<PathBuf> {
     }
     let base = match std::env::var_os("XDG_CONFIG_HOME") {
         Some(dir) => PathBuf::from(dir),
-        None => match std::env::var_os("HOME") {
-            Some(home) => PathBuf::from(home).join(".config"),
-            None => return None,
-        },
+        None => {
+            let home = std::env::var_os("HOME")?;
+            PathBuf::from(home).join(".config")
+        }
     };
     Some(base.join("phonon-say").join("config.toml"))
 }
