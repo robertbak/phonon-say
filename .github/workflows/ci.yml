@@ -58,6 +58,41 @@ jobs:
           python3 scripts/third-party-licenses.py
           git diff --exit-code -- THIRD_PARTY_LICENSES.md
 
+  arm64:
+    name: build (aarch64)
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libasound2-dev \
+            cmake \
+            nasm \
+            perl \
+            pkg-config
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check the runner really is aarch64
+        run: |
+          host=$(rustc -vV | sed -n 's/^host: //p')
+          echo "host=$host"
+          if [ "$host" != "aarch64-unknown-linux-gnu" ]; then
+            echo "::error::expected an aarch64 runner, got $host"
+            exit 1
+          fi
+
+      - name: Build
+        run: cargo build --release --locked
+
+      - name: Test
+        run: cargo test --release
+
   package:
     name: package
     runs-on: ubuntu-latest

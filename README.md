@@ -281,9 +281,11 @@ tar -xzf phonon-say-<version>-linux-x86_64.tar.gz
 install -m755 phonon-say-<version>-linux-x86_64/phonon-say ~/.local/bin/
 ```
 
-The binary links against ALSA (`libasound.so.2`), so it needs `libasound2` on
-the target machine. On PipeWire or PulseAudio systems the ALSA `default`
-device routes through the sound server.
+Releases ship `linux-x86_64` and `linux-aarch64` tarballs, each with a
+SHA256 checksum in `SHA256SUMS`. The binary links against ALSA
+(`libasound.so.2`), so it needs `libasound2` on the target machine. On
+PipeWire or PulseAudio systems the ALSA `default` device routes through the
+sound server.
 
 ## Layout
 
