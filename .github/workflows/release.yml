@@ -1,0 +1,89 @@
+name: Release
+
+# Cut a release by pushing a tag. The tag must be `v<version>` and must match
+# the version in Cargo.toml, so there is exactly one place to bump.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v0.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Install build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libasound2-dev \
+            cmake \
+            nasm \
+            perl \
+            pkg-config
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Check the tag matches Cargo.toml
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          if [ -n "${{ inputs.tag }}" ]; then tag="${{ inputs.tag }}"; fi
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')
+          echo "tag=$tag version=$version"
+          if [ "$tag" != "v$version" ]; then
+            echo "::error::tag $tag does not match Cargo.toml version $version"
+            exit 1
+          fi
+          echo "TAG=$tag" >> "$GITHUB_ENV"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Build release binary
+        run: |
+          cargo build --release --locked
+          mkdir -p dist
+          cp target/release/phonon-say dist/phonon-say
+          strip dist/phonon-say || true
+
+      - name: Package tarball
+        run: |
+          mkdir -p dist/phonon-say-$VERSION-linux-x86_64
+          cp dist/phonon-say "dist/phonon-say-$VERSION-linux-x86_64/phonon-say"
+          cp README.md NOTICE LICENSE-MIT LICENSE-APACHE THIRD_PARTY_LICENSES.md \
+            "dist/phonon-say-$VERSION-linux-x86_64/"
+          tar -C dist -czf "dist/phonon-say-$VERSION-linux-x86_64.tar.gz" \
+            "phonon-say-$VERSION-linux-x86_64"
+          rm -rf "dist/phonon-say-$VERSION-linux-x86_64"
+
+      - name: Checksum
+        run: |
+          cd dist
+          sha256sum phonon-say-$VERSION-linux-x86_64.tar.gz > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Create the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: phonon-say $VERSION
+          tag_name: ${{ env.TAG }}
+          generate_release_notes: true
+          files: |
+            dist/phonon-say-$VERSION-linux-x86_64.tar.gz
+            dist/SHA256SUMS

@@ -1,0 +1,38 @@
+[package]
+name = "phonon-say"
+version = "0.1.0"
+edition = "2024"
+description = "Stream Phonon text-to-speech straight to the speakers"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/robertbak/phonon-say"
+homepage = "https://github.com/robertbak/phonon-say"
+documentation = "https://github.com/robertbak/phonon-say#readme"
+keywords = ["tts", "speech", "phonon", "audio", "streaming"]
+categories = ["multimedia::audio", "command-line-utilities"]
+include = [
+    "src/*.rs",
+    "Cargo.toml",
+    "Cargo.lock",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
+    "NOTICE",
+    "THIRD_PARTY_LICENSES.md",
+    "config.example.toml",
+    "scripts/third-party-licenses.py",
+]
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+cpal = "0.18"
+rtrb = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "1"
+ptts = { version = "0.4", features = ["hf", "hub"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"

@@ -1,0 +1,19 @@
+phonon-say
+Copyright (c) 2026 phonon-say contributors
+
+This product includes the Phonon runtime `ptts` and the `xn` tensor library,
+developed by Gradium and contributors, licensed under MIT OR Apache-2.0:
+https://github.com/gradium-ai/xn-ptts
+
+Model weights and voices are not distributed with this software. They are
+downloaded separately from Hugging Face under their own terms:
+
+  - gradium/phonon-31m-en                  Apache-2.0
+  - gradium/phonon-40m-en (and 40m family) CC BY-NC 4.0 (non-commercial)
+  - gradium/phonon-voices                  Apache-2.0
+
+See the model cards for the authoritative terms. If you redistribute a cached
+model or voice file, you redistribute that asset under its own license.
+
+phonon-say is an independent project, not affiliated with or endorsed by
+Gradium. "Phonon" and the model names are used descriptively.

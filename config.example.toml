@@ -1,0 +1,38 @@
+# ~/.config/phonon-say/config.toml
+#
+# Everything here is optional. Command-line flags override these values, and
+# anything left unset falls back to the built-in default in the comments.
+# Check the effective result with `phonon-say --show-config`.
+
+# Model: 31m, 40m, hf://owner/model[@revision], or a local checkpoint directory.
+# model = "31m"
+
+# Voice: a checkpoint or catalog voice name, or a path to a .safetensors file.
+# voice = "Zoey"
+
+# Text normalization language: en, fr, de, es, pt, none.
+# lang = "en"
+
+# Weight format and compute device.
+# quant = "q8"          # q8 or f32
+# device = "auto"       # auto, cpu, cuda, vulkan, metal
+
+# Output device name substring; omitted means the system default.
+# output_device = "USB Audio"
+
+# Sampling and speaking rate.
+# temperature = 0.3
+# seed = 4242424242424242
+# duration_delta = 0.0  # negative is faster, positive slower
+
+# Voice catalog used for names the checkpoint does not have.
+# voice_catalog = "hf://gradium/phonon-voices@da6c9ec0d47be8df5c87c730a3aa97187f3229c3"
+
+# Warm service: what to load at startup. Defaults to the model and voice above.
+# preload = ["31m", "40m"]
+# preload_voice = ["Zoey", "default"]
+
+# Warm service cache limits. Each warm model costs roughly 150-350 MB; each
+# conditioned voice adds its primed state to one model.
+# max_models = 1
+# max_voices = 1   # per model, 1-16
