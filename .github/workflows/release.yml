@@ -71,6 +71,7 @@ jobs:
           tar -C dist -czf "dist/phonon-say-$VERSION-linux-x86_64.tar.gz" \
             "phonon-say-$VERSION-linux-x86_64"
           rm -rf "dist/phonon-say-$VERSION-linux-x86_64"
+          test -s "dist/phonon-say-$VERSION-linux-x86_64.tar.gz"
 
       - name: Checksum
         run: |
@@ -81,9 +82,9 @@ jobs:
       - name: Create the GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          name: phonon-say $VERSION
+          name: phonon-say ${{ env.VERSION }}
           tag_name: ${{ env.TAG }}
           generate_release_notes: true
           files: |
-            dist/phonon-say-$VERSION-linux-x86_64.tar.gz
+            dist/phonon-say-${{ env.VERSION }}-linux-x86_64.tar.gz
             dist/SHA256SUMS
